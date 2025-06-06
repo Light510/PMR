@@ -149,6 +149,11 @@ function checkAdmin() {
     }
   });
 }
+// fungsi logout
+function logout() {
+  localStorage.removeItem("admin");
+  location.reload();
+}
 
 
 checkAdmin();
