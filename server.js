@@ -27,7 +27,7 @@ app.get("/api/students", (req, res) => {
 // Tambah siswa baru
 app.post("/api/students", (req, res) => {
   const data = readData();
-  const { name, angkatan } = req.body;
+  const { name, angkatan, tgl } = req.body;
 
   if (!name) {
     return res.status(400).json({ error: "Nama wajib diisi" });
@@ -37,8 +37,8 @@ app.post("/api/students", (req, res) => {
     id: Date.now(),
     name,
     angkatan: angkatan || "41", // default angkatan jika tidak dikirim
-    tgl: "",
-    count: 0
+    tgl: tgl || "",
+    count: 1
   };
 
   data.push(newStudent);
@@ -56,7 +56,11 @@ app.put("/api/students/:id", (req, res) => {
   }
 
   if (req.body.count !== undefined) {
-    student.count = parseInt(req.body.count);
+    student.count = req.body.count;
+  }
+
+  if (req.body.tgl !== undefined) {
+    student.tgl = req.body.tgl;
   }
 
   writeData(data);

@@ -42,16 +42,42 @@ async function fetchStudents() {
 // Tambah siswa baru (admin saja)
 async function addStudent() {
   const nameInput = document.getElementById("nameInput");
+  const angkatanInput = document.getElementById("angkatanInput");
+  const tglJagaInput = document.getElementById("tglJagaInput");
   const name = nameInput.value.trim();
+  const angkatan = angkatanInput.value.trim();
+  const tglJaga = tglJagaInput.value;
+
   if (!name) return;
 
   try {
-    await fetch("/api/students", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name })
-    });
+    // Cek apakah siswa sudah ada
+    const res = await fetch("/api/students");
+    const students = await res.json();
+    const existingStudent = students.find(student => student.name === name && student.angkatan === angkatan);
+
+    if (existingStudent) {
+      // Update count dan tanggal jaga jika sudah ada
+      await fetch(`/api/students/${existingStudent.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          count: existingStudent.count + 1,
+          tgl: tglJaga
+        })
+      });
+    } else {
+      // Tambah siswa baru jika belum ada
+      await fetch("/api/students", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, angkatan, tgl: tglJaga })
+      });
+    }
+
     nameInput.value = "";
+    angkatanInput.value = "";
+    tglJagaInput.value = "";
     fetchStudents();
   } catch (err) {
     console.error("Gagal menambahkan siswa:", err);
