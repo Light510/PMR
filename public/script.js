@@ -136,14 +136,25 @@ async function deleteStudent(id) {
 
 
 function checkAdmin() {
-  const params = new URLSearchParams(window.location.search);
-  const isAdmin = params.get("admin") === "true";
-
+  const isAdmin = localStorage.getItem("admin") === "true";
   const formEl = document.getElementById("admin-form");
   if (!isAdmin && formEl) {
     formEl.style.display = "none";
   }
+
+  // Non-admin tidak bisa klik tombol hapus
+  document.querySelectorAll("button").forEach(btn => {
+    if (btn.innerText.includes("Hapus") && !isAdmin) {
+      btn.style.display = "none";
+    }
+  });
 }
+// fungsi logout
+function logout() {
+  localStorage.removeItem("admin");
+  location.reload();
+}
+
 
 checkAdmin();
 fetchStudents();
