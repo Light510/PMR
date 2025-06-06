@@ -12,6 +12,8 @@ async function fetchStudents() {
     document.getElementById('count-40').innerText = count40;
     document.getElementById('count-41').innerText = count41;
 
+    const isAdmin = localStorage.getItem("admin") === "true"; // ✅ Tambahkan ini
+
     let html = "";
     students.forEach(s => {
       const tanggalOptions = (s.tglList || []).slice().reverse().map(t => `<option>${t}</option>`).join('') || '<option>-</option>';
@@ -26,7 +28,7 @@ async function fetchStudents() {
               onchange="updateCount(${s.id}, this.value)" class="w-16 p-1 border" />
           </td>
           <td class="border p-2">
-            <button onclick="deleteStudent(${s.id})" class="bg-red-500 text-white px-2 py-1">Hapus</button>
+            ${isAdmin ? `<button onclick="deleteStudent(${s.id})" class="bg-red-500 text-white px-2 py-1">Hapus</button>` : ''}
           </td>
         </tr>
       `;
