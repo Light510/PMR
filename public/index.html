@@ -49,7 +49,7 @@
     <tbody id="studentTable"></tbody>
   </table>
   <!-- Tambahkan di dalam body -->
-<button onclick="showLogin()" class="bg-gray-700 text-white px-3 py-1 rounded">Login Admin</button>
+<button onclick="showLogin()" class="bg-gray-700 text-white px-3 py-1 rounded" id="loginBtn">Login Admin</button>
 
 <div id="loginForm" class="hidden mt-4">
   <input type="password" id="adminPassword" placeholder="Password admin" class="border p-1" />
@@ -65,10 +65,18 @@
     const password = document.getElementById("adminPassword").value;
     if (password === "pmradmin123") {
       localStorage.setItem("admin", "true");
+      document.getElementById("loginBtn").classList.add("hidden");
       window.location.href = "/admin.html";
     } else {
       alert("Password salah");
     }
   }
+
+  // Sembunyikan tombol login jika sudah login sebelumnya
+  window.addEventListener("DOMContentLoaded", () => {
+    if (localStorage.getItem("admin") === "true") {
+      document.getElementById("loginBtn").classList.add("hidden");
+    }
+  });
 </script>
 </html>
