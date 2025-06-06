@@ -56,4 +56,19 @@
   <button onclick="adminLogin()" class="bg-blue-500 text-white px-2 py-1">Login</button>
 </div>
 </body>
+<script>
+  function showLogin() {
+    document.getElementById("loginForm").classList.remove("hidden");
+  }
+
+  function adminLogin() {
+    const password = document.getElementById("adminPassword").value;
+    if (password === "pmradmin123") {
+      localStorage.setItem("admin", "true");
+      window.location.href = "/admin.html";
+    } else {
+      alert("Password salah");
+    }
+  }
+</script>
 </html>
