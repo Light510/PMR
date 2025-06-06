@@ -18,8 +18,10 @@ async function fetchStudents() {
     // Tampilkan siswa ke tabel
     let html = "";
     students.forEach(s => {
-      // Menyusun dropdown dengan semua tanggal jaga yang pernah dilakukan
-      const dateOptions = s.tgl.map(date => `<option value="${date}">${date}</option>`).join('');
+      // Pastikan s.tgl adalah array
+      const dates = Array.isArray(s.tgl) ? s.tgl : [];  // jika s.tgl bukan array, set menjadi array kosong
+
+      const dateOptions = dates.map(date => `<option value="${date}">${date}</option>`).join('');
       
       html += `
         <tr>
@@ -45,6 +47,7 @@ async function fetchStudents() {
     console.error("Gagal memuat data siswa:", err);
   }
 }
+
 
 // Tambah siswa baru (admin saja)
 async function addStudent() {
