@@ -18,10 +18,17 @@ async function fetchStudents() {
     // Tampilkan siswa ke tabel
     let html = "";
     students.forEach(s => {
+      // Menyusun dropdown dengan semua tanggal jaga yang pernah dilakukan
+      const dateOptions = s.tgl.map(date => `<option value="${date}">${date}</option>`).join('');
+      
       html += `
         <tr>
           <td class="border p-2">${s.name}</td>
-          <td class="border p-2">${s.tgl || '-'}</td>
+          <td class="border p-2">
+            <select class="p-1 border" disabled>
+              ${dateOptions || '<option>-</option>'}
+            </select>
+          </td>
           <td class="border p-2">
             <input type="number" value="${s.count ?? 0}" min="0"
               onchange="updateCount(${s.id}, this.value)" class="w-16 p-1 border" />
