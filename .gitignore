@@ -15,6 +15,7 @@ yarn-error.log*
 # OS-generated files
 .DS_Store
 Thumbs.db
+students.db
 
 # VS Code setting folder (optional)
 .vscode/
