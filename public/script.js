@@ -1,27 +1,27 @@
-// Fetch dan tampilkan semua siswa
+// --- public/script.js ---
 async function fetchStudents() {
   try {
     const res = await fetch("/api/students");
     const students = await res.json();
     const tbody = document.getElementById("studentTable");
 
-    // Hitung jumlah berdasarkan angkatan
     const count39 = students.filter(s => s.angkatan === '39').length;
     const count40 = students.filter(s => s.angkatan === '40').length;
     const count41 = students.filter(s => s.angkatan === '41').length;
 
-    // Update tampilan kotak statistik
     document.getElementById('count-39').innerText = count39;
     document.getElementById('count-40').innerText = count40;
     document.getElementById('count-41').innerText = count41;
 
-    // Tampilkan siswa ke tabel
     let html = "";
     students.forEach(s => {
+      const tanggalOptions = (s.tglList || []).slice().reverse().map(t => `<option>${t}</option>`).join('') || '<option>-</option>';
       html += `
         <tr>
           <td class="border p-2">${s.name}</td>
-          <td class="border p-2">${s.tgl || '-'}</td>
+          <td class="border p-2">
+            <select class="border p-1">${tanggalOptions}</select>
+          </td>
           <td class="border p-2">
             <input type="number" value="${s.count ?? 0}" min="0"
               onchange="updateCount(${s.id}, this.value)" class="w-16 p-1 border" />
@@ -39,7 +39,6 @@ async function fetchStudents() {
   }
 }
 
-// Tambah siswa baru (admin saja)
 async function addStudent() {
   const nameInput = document.getElementById("nameInput");
   const angkatanInput = document.getElementById("angkatanInput");
@@ -51,13 +50,11 @@ async function addStudent() {
   if (!name) return;
 
   try {
-    // Cek apakah siswa sudah ada
     const res = await fetch("/api/students");
     const students = await res.json();
     const existingStudent = students.find(student => student.name === name && student.angkatan === angkatan);
 
     if (existingStudent) {
-      // Update count dan tanggal jaga jika sudah ada
       await fetch(`/api/students/${existingStudent.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -67,7 +64,6 @@ async function addStudent() {
         })
       });
     } else {
-      // Tambah siswa baru jika belum ada
       await fetch("/api/students", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -84,7 +80,6 @@ async function addStudent() {
   }
 }
 
-// Update jumlah jaga
 async function updateCount(id, count) {
   try {
     await fetch(`/api/students/${id}`, {
@@ -97,17 +92,48 @@ async function updateCount(id, count) {
   }
 }
 
-// Hapus siswa
 async function deleteStudent(id) {
-  try {
-    await fetch(`/api/students/${id}`, { method: "DELETE" });
-    fetchStudents();
-  } catch (err) {
-    console.error("Gagal menghapus siswa:", err);
+  const swalWithBootstrapButtons = Swal.mixin({
+    customClass: {
+      confirmButton: "btn btn-success",
+      cancelButton: "btn btn-danger"
+    },
+    buttonsStyling: false
+  });
+
+  const result = await swalWithBootstrapButtons.fire({
+    title: "Are you sure?",
+    text: "You won't be able to revert this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Yes, delete it!",
+    cancelButtonText: "No, cancel!",
+    reverseButtons: true
+  });
+
+  if (result.isConfirmed) {
+    try {
+      await fetch(`/api/students/${id}`, { method: "DELETE" });
+      swalWithBootstrapButtons.fire({
+        title: "Deleted!",
+        text: "Siswa telah dihapus.",
+        icon: "success"
+      });
+      fetchStudents();
+    } catch (err) {
+      console.error("Gagal menghapus siswa:", err);
+      Swal.fire("Error", "Terjadi kesalahan saat menghapus siswa.", "error");
+    }
+  } else if (result.dismiss === Swal.DismissReason.cancel) {
+    swalWithBootstrapButtons.fire({
+      title: "Cancelled",
+      text: "Data siswa tidak jadi dihapus.",
+      icon: "error"
+    });
   }
 }
 
-// Sembunyikan form tambah jika bukan admin
+
 function checkAdmin() {
   const params = new URLSearchParams(window.location.search);
   const isAdmin = params.get("admin") === "true";
@@ -118,6 +144,5 @@ function checkAdmin() {
   }
 }
 
-// Inisialisasi saat halaman dibuka
 checkAdmin();
 fetchStudents();
