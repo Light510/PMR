@@ -1,4 +1,5 @@
 // --- public/script.js ---
+// const Swal = require('sweetalert2')
 async function fetchStudents() {
   try {
     const res = await fetch("/api/students");
@@ -102,13 +103,13 @@ async function deleteStudent(id) {
   });
 
   const result = await swalWithBootstrapButtons.fire({
-    title: "Are you sure?",
-    text: "You won't be able to revert this!",
+    title: "Apakah Kamu Yakin?",
+    text: "Kamu tidak bisa mengembalikan ini!",
     icon: "warning",
     showCancelButton: true,
     confirmButtonText: "Yes, delete it!",
     cancelButtonText: "No, cancel!",
-    reverseButtons: true
+    reverseButtons: false
   });
 
   if (result.isConfirmed) {
@@ -116,7 +117,7 @@ async function deleteStudent(id) {
       await fetch(`/api/students/${id}`, { method: "DELETE" });
       swalWithBootstrapButtons.fire({
         title: "Deleted!",
-        text: "Siswa telah dihapus.",
+        text: "Data Siswa telah dihapus.",
         icon: "success"
       });
       fetchStudents();
@@ -127,7 +128,7 @@ async function deleteStudent(id) {
   } else if (result.dismiss === Swal.DismissReason.cancel) {
     swalWithBootstrapButtons.fire({
       title: "Cancelled",
-      text: "Data siswa tidak jadi dihapus.",
+      text: "Batal Menghapus Data Siswa",
       icon: "error"
     });
   }
