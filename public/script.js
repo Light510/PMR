@@ -1,5 +1,3 @@
-// --- public/script.js ---
-// const Swal = require('sweetalert2')
 async function fetchStudents() {
   try {
     const res = await fetch("/api/students");
@@ -13,6 +11,8 @@ async function fetchStudents() {
     document.getElementById('count-39').innerText = count39;
     document.getElementById('count-40').innerText = count40;
     document.getElementById('count-41').innerText = count41;
+
+    const isAdmin = localStorage.getItem("admin") === "true"; // ✅ Tambahkan ini
 
     let html = "";
     students.forEach(s => {
@@ -28,32 +28,28 @@ async function fetchStudents() {
               onchange="updateCount(${s.id}, this.value)" class="w-16 p-1 border" />
           </td>
           <td class="border p-2">
-            <button onclick="deleteStudent(${s.id})" class="bg-red-500 text-white px-2 py-1">Hapus</button>
+            ${isAdmin ? `<button onclick="deleteStudent(${s.id})" class="bg-red-500 text-white px-2 py-1">Hapus</button>` : ''}
           </td>
         </tr>
       `;
     });
     tbody.innerHTML = html;
-
   } catch (err) {
     console.error("Gagal memuat data siswa:", err);
   }
 }
 
 async function addStudent() {
-  const nameInput = document.getElementById("nameInput");
-  const angkatanInput = document.getElementById("angkatanInput");
-  const tglJagaInput = document.getElementById("tglJagaInput");
-  const name = nameInput.value.trim();
-  const angkatan = angkatanInput.value.trim();
-  const tglJaga = tglJagaInput.value;
+  const name = document.getElementById("nameInput").value.trim();
+  const angkatan = document.getElementById("angkatanInput").value.trim();
+  const tglJaga = document.getElementById("tglJagaInput").value;
 
   if (!name) return;
 
   try {
     const res = await fetch("/api/students");
     const students = await res.json();
-    const existingStudent = students.find(student => student.name === name && student.angkatan === angkatan);
+    const existingStudent = students.find(s => s.name === name && s.angkatan === angkatan);
 
     if (existingStudent) {
       await fetch(`/api/students/${existingStudent.id}`, {
@@ -72,9 +68,10 @@ async function addStudent() {
       });
     }
 
-    nameInput.value = "";
-    angkatanInput.value = "";
-    tglJagaInput.value = "";
+    document.getElementById("nameInput").value = "";
+    document.getElementById("angkatanInput").value = "";
+    document.getElementById("tglJagaInput").value = "";
+
     fetchStudents();
   } catch (err) {
     console.error("Gagal menambahkan siswa:", err);
@@ -107,54 +104,72 @@ async function deleteStudent(id) {
     text: "Kamu tidak bisa mengembalikan ini!",
     icon: "warning",
     showCancelButton: true,
-    confirmButtonText: "Yes, delete it!",
-    cancelButtonText: "No, cancel!",
-    reverseButtons: false
+    confirmButtonText: "Ya, hapus!",
+    cancelButtonText: "Batal",
+    reverseButtons: true
   });
 
   if (result.isConfirmed) {
     try {
       await fetch(`/api/students/${id}`, { method: "DELETE" });
-      swalWithBootstrapButtons.fire({
-        title: "Deleted!",
-        text: "Data Siswa telah dihapus.",
-        icon: "success"
-      });
+      swalWithBootstrapButtons.fire("Berhasil!", "Data siswa telah dihapus.", "success");
       fetchStudents();
     } catch (err) {
       console.error("Gagal menghapus siswa:", err);
       Swal.fire("Error", "Terjadi kesalahan saat menghapus siswa.", "error");
     }
   } else if (result.dismiss === Swal.DismissReason.cancel) {
-    swalWithBootstrapButtons.fire({
-      title: "Cancelled",
-      text: "Batal Menghapus Data Siswa",
-      icon: "error"
-    });
+    swalWithBootstrapButtons.fire("Dibatalkan", "Data siswa tidak jadi dihapus", "error");
   }
 }
 
+// ------------------- Admin Handling --------------------
+
+function showLogin() {
+  const form = document.getElementById("loginForm");
+  if (form) form.classList.remove("hidden");
+}
+
+function adminLogin() {
+  const password = document.getElementById("adminPassword")?.value;
+  if (password === "pmradmin123") {
+    localStorage.setItem("admin", "true");
+    const isAdminPage = window.location.pathname.includes("admin.html");
+    if (!isAdminPage) window.location.href = "/admin.html";
+    else {
+      setAdminUI(true);
+    }
+  } else {
+    alert("Password salah");
+  }
+}
+
+function Logout() {
+  localStorage.removeItem("admin");
+  setAdminUI(false);
+  setTimeout(() => {
+    window.location.href = "/index.html";
+  }, 1000);
+}
 
 function checkAdmin() {
   const isAdmin = localStorage.getItem("admin") === "true";
-  const formEl = document.getElementById("admin-form");
-  if (!isAdmin && formEl) {
-    formEl.style.display = "none";
-  }
-
-  // Non-admin tidak bisa klik tombol hapus
-  document.querySelectorAll("button").forEach(btn => {
-    if (btn.innerText.includes("Hapus") && !isAdmin) {
-      btn.style.display = "none";
-    }
-  });
-}
-// fungsi logout
-function logout() {
-  localStorage.removeItem("admin");
-  location.reload();
+  setAdminUI(isAdmin);
 }
 
+function setAdminUI(isAdmin) {
+  const loginBtn = document.getElementById("loginBtn");
+  const logoutBtn = document.getElementById("logoutBtn");
+  const adminForm = document.getElementById("admin-form");
 
-checkAdmin();
-fetchStudents();
+  if (loginBtn) loginBtn.classList.toggle("hidden", isAdmin);
+  if (logoutBtn) logoutBtn.classList.toggle("hidden", !isAdmin);
+  if (adminForm) adminForm.classList.toggle("hidden", !isAdmin);
+}
+
+// ------------------- Init --------------------
+
+window.addEventListener("DOMContentLoaded", () => {
+  checkAdmin();
+  fetchStudents();
+});
