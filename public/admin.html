@@ -1,4 +1,3 @@
-<!-- public/admin.html -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -15,7 +14,6 @@
   <button onclick="login()" class="bg-blue-500 text-white px-3 py-2 ml-2">Login</button>
   <button onclick="logout()" class="bg-red-500 text-white px-3 py-1 ml-4">Logout</button>
 
-
   <script>
     function login() {
       const inputPassword = document.getElementById("password").value;
@@ -23,11 +21,25 @@
 
       if (inputPassword === correctPassword) {
         localStorage.setItem("admin", "true");
-        window.location.href = "index.html"; // redirect ke halaman utama
+        window.location.href = "/index.html";
       } else {
         Swal.fire("Gagal", "Password salah!", "error");
       }
     }
+
+    function logout() {
+      localStorage.removeItem("admin");
+      Swal.fire("Logout", "Anda telah logout.", "success").then(() => {
+        window.location.href = "/admin.html";
+      });
+    }
+
+    // Jika sudah login, langsung redirect ke index
+    window.addEventListener("DOMContentLoaded", () => {
+      if (localStorage.getItem("admin") === "true") {
+        window.location.href = "/index.html";
+      }
+    });
   </script>
 </body>
 </html>
