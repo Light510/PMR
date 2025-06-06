@@ -1,0 +1,29 @@
+<!-- public/admin.html -->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login Admin</title>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="p-6 font-sans">
+  <h1 class="text-xl font-bold mb-4">Login Admin</h1>
+  <input type="password" id="password" placeholder="Masukkan password" class="border p-2" />
+  <button onclick="login()" class="bg-blue-500 text-white px-3 py-2 ml-2">Login</button>
+
+  <script>
+    function login() {
+      const inputPassword = document.getElementById("password").value;
+      const correctPassword = "pmradmin123"; // ganti sesuai keinginan
+
+      if (inputPassword === correctPassword) {
+        localStorage.setItem("admin", "true");
+        window.location.href = "/"; // redirect ke halaman utama
+      } else {
+        Swal.fire("Gagal", "Password salah!", "error");
+      }
+    }
+  </script>
+</body>
+</html>
