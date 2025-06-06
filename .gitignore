@@ -19,7 +19,4 @@ students.db
 
 # VS Code setting folder (optional)
 .vscode/
-
-package-lock.json
-package.json
 code-1-web.code-workspace
