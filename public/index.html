@@ -50,7 +50,7 @@
   </table>
   <!-- Tambahkan di dalam body -->
 <button onclick="showLogin()" class="bg-gray-700 text-white px-3 py-1 rounded" id="loginBtn">Login Admin</button>
-
+<button onclick="Logout()" class="bg-gray-700 text-white px-3 py-1 rounded" id="logoutBtn">Logout</button>
 <div id="loginForm" class="hidden mt-4">
   <input type="password" id="adminPassword" placeholder="Password admin" class="border p-1" />
   <button onclick="adminLogin()" class="bg-blue-500 text-white px-2 py-1">Login</button>
@@ -66,17 +66,31 @@
     if (password === "pmradmin123") {
       localStorage.setItem("admin", "true");
       document.getElementById("loginBtn").classList.add("hidden");
+      document.getElementById("logoutBtn").classList.remove("hidden");
       window.location.href = "/admin.html";
     } else {
       alert("Password salah");
     }
   }
 
-  // Sembunyikan tombol login jika sudah login sebelumnya
+  function Logout() {
+    localStorage.removeItem("admin");
+    document.getElementById("loginBtn").classList.remove("hidden");
+    document.getElementById("logoutBtn").classList.add("hidden");
+    alert("Berhasil logout");
+    // window.location.href = "/index.html"; // bisa ditambahkan jika ingin redirect
+  }
+
+  // Saat halaman dimuat, atur tombol login/logout sesuai status
   window.addEventListener("DOMContentLoaded", () => {
     if (localStorage.getItem("admin") === "true") {
       document.getElementById("loginBtn").classList.add("hidden");
+      document.getElementById("logoutBtn").classList.remove("hidden");
+    } else {
+      document.getElementById("loginBtn").classList.remove("hidden");
+      document.getElementById("logoutBtn").classList.add("hidden");
     }
   });
 </script>
+
 </html>
