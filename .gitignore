@@ -1,0 +1,23 @@
+# Folder dependency
+node_modules/
+
+# Data file (jika pakai JSON sebagai "database")
+data.json
+
+# Log file
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment file (kalau nanti pakai .env)
+.env
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# VS Code setting folder (optional)
+.vscode/
+
+package-lock.json
+package.json
