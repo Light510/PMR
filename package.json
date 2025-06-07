@@ -1,4 +1,10 @@
 {
+  "name": "absen-backend",
+  "version": "0.0.1",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"},
   "dependencies": {
     "start":"node server.js",
     "express": "^5.1.0",
