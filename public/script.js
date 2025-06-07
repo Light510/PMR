@@ -1,5 +1,10 @@
 const API_BASE = "https://absen-pmr.up.railway.app";
+const cors = require("cors");
 
+app.use(cors({
+  origin: "*", // atau ganti jadi: ['https://namadomainmu.netlify.app'] untuk lebih aman
+}));
+  
 async function fetchStudents() {
   try {
     const res = await fetch(`${API_BASE}/api/students`);
