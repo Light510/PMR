@@ -6,7 +6,6 @@
   "scripts": {
     "start": "node server.js"},
   "dependencies": {
-    "start":"node server.js",
     "express": "^5.1.0",
     "sqlite3": "^5.1.7"
   }
