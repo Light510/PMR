@@ -1,6 +1,8 @@
+const API_BASE = "https://absen-pmr.up.railway.app";
+
 async function fetchStudents() {
   try {
-    const res = await fetch("/api/students");
+    const res = await fetch(`${API_BASE}/api/students`);
     const students = await res.json();
     const tbody = document.getElementById("studentTable");
 
@@ -47,12 +49,12 @@ async function addStudent() {
   if (!name) return;
 
   try {
-    const res = await fetch("/api/students");
+    const res = await fetch(`${API_BASE}/api/students`);
     const students = await res.json();
     const existingStudent = students.find(s => s.name === name && s.angkatan === angkatan);
 
     if (existingStudent) {
-      await fetch(`/api/students/${existingStudent.id}`, {
+      await fetch(`${API_BASE}/api/students/${existingStudent.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -61,7 +63,7 @@ async function addStudent() {
         })
       });
     } else {
-      await fetch("/api/students", {
+      await fetch(`${API_BASE}/api/students`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, angkatan, tgl: tglJaga })
@@ -80,7 +82,7 @@ async function addStudent() {
 
 async function updateCount(id, count) {
   try {
-    await fetch(`/api/students/${id}`, {
+    await fetch(`${API_BASE}/api/students/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ count: parseInt(count) })
@@ -111,7 +113,7 @@ async function deleteStudent(id) {
 
   if (result.isConfirmed) {
     try {
-      await fetch(`/api/students/${id}`, { method: "DELETE" });
+      await fetch(`${API_BASE}/api/students/${id}`, { method: "DELETE" });
       swalWithBootstrapButtons.fire("Berhasil!", "Data siswa telah dihapus.", "success");
       fetchStudents();
     } catch (err) {
